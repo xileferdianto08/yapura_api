@@ -8,36 +8,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $response = array();
         $response['login_user'] = array();
 
-        if ($email == '') {
-            http_response_code(400);
-            echo "Email cannot be empty<br>";
-            $response['status'] = "EMAIL_EMPTY";
-        }
         if (!str_contains($email, '@student.umn.ac.id') && !str_contains($email, '@umn.ac.id')) {
             http_response_code(400);
             echo "Please use your student or staff email!";
             $response['status'] = "EMAIL_INCORRECT_FORMAT";
         } else {
-            if ($password == '') {
-                http_response_code(400);
-                echo "Password cannot be empty<br>";
-                $response['status'] = "PWD_EMPTY";
-            } else {
-                $hashedPwd = hash('sha512', $password);
 
-                $query = "SELECT * FROM `users` WHERE `email` = '$email' AND `password` = '$hashedPwd'";
-                $result = mysqli_query($con, $query);
+            $hashedPwd = hash('sha512', $password);
 
+            $query = $con->prepare("SELECT * FROM users WHERE email = :email");
+            $query->bindParam(":email", $email);
+            $query->execute();
 
-                $row = mysqli_num_rows($result);
-                $results = mysqli_fetch_array($result);
+            $result = $query->fetch();
 
-                if ($row > 0) {
+            if ($query->rowCount() > 0) {
+                if ($hashedPwd == $result['password']) {
                     http_response_code(200);
                     echo "Succesfully Logged in";
-                    
-                    $data['nama'] = $results['nama'];
-                    $data['email'] = $results['email'];
+
+                    $data['userId'] = $result['id'];
+                    $data['nama'] = $result['nama'];
+                    $data['email'] = $result['email'];
 
                     array_push($response['login_user'], $data);
 
@@ -47,6 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     echo "Email or Password is incorrect<br>";
                     $response['status'] = "DATA_INCORRECT";
                 }
+            } else {
+                http_response_code(404);
+                $response['status'] = "DATA_NOT_EXIST";
             }
         }
     } else {
@@ -56,5 +51,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     echo json_encode(array('server_response' => $response));
-    mysqli_close($con);
 }

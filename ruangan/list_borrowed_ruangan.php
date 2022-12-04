@@ -3,26 +3,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     require_once '../dbConfig/db_connect.php';
 
     if ($con) {
-        $query = "SELECT pr.*, lr.nama nama FROM `peminjaman_ruangan` pr
-        JOIN `list_ruangan` as lr ON pr.ruangId = lr.id";
-        $result = mysqli_query($con, $query);
+        $query = $con->prepare("SELECT pr.*, lb.nama nama FROM peminjaman_ruangan pr
+        JOIN list_ruangan as lb ON pr.ruanganId = lb.id");
+
         $response = array();
         $response['data_peminjaman_r'] = array();
 
-        $row = mysqli_num_rows($result);
-        $results = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $query->fetchAll();
 
-        if($row > 0){
-            http_response_code(200);
-           
-            array_push($response['data_peminjaman_r'], $results);
-        
+        if ($query->rowCount() > 0) {
+            foreach ($query as $row) {
+                http_response_code(200);
+                array_push($response['data_peminjaman_r'], $results);
+            }
         } else {
             http_response_code(200);
-            echo "Data unavailable yet<br>";
+            echo "Data unavailable <br>";
             $response['status'] = "DATA_UNAVAIL";
         }
-
     } else {
         http_response_code(500);
         echo "Database cannot connect<br>";

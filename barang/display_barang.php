@@ -3,26 +3,26 @@
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     require_once '../dbConfig/db_connect.php';
     if ($con) {
-        $query = "SELECT * FROM `list_barang`";
-        $result = mysqli_query($con, $query);
+        $query = $con->prepare("SELECT * FROM list_barang");
+        $query->execute();
+
         $response = array();
         $response['data_barang'] = array();
 
+        $row = $query->fetchAll();
 
-        $row = mysqli_num_rows($result);
-        $results = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-        if ($row > 0) {
-            http_response_code(200);
-           
-            array_push($response['data_barang'], $results);
-        
-        } else {
-            http_response_code(200);
-            echo "Data unavailable <br>";
-            $response['status'] = "DATA_UNAVAIL";
+        foreach ($row as $data) {
+            if ($query->rowCount() > 0) {
+                http_response_code(200);
+                array_push($response['data_barang'], $data);
+            } else {
+                http_response_code(200);
+                echo "Data unavailable yet<br>";
+                $response['status'] = "DATA_UNAVAIL";
+            }
         }
     } else {
+
         http_response_code(500);
         echo "Database cannot connect";
         array_push($response, array(
@@ -31,5 +31,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
 
     echo json_encode(array('server_response' => $response));
-    mysqli_close($con);
 }

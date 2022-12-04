@@ -1,8 +1,8 @@
-<?php 
-if($_SERVER['REQUEST_METHOD'] =='POST'){
+<?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require_once '../dbConfig/db_connect.php';
 
-    if($con) {
+    if ($con) {
         $userId = $_POST['userId'];
         $barangId = $_POST['barangId'];
         $startDate = $_POST['startDate'];
@@ -13,42 +13,54 @@ if($_SERVER['REQUEST_METHOD'] =='POST'){
         $necessity = $_POST['necessity'];
         $response = array();
 
-        $query = "SELECT * FROM `peminjaman_barang` WHERE `barangId` = '$barangId'";
-        $result = mysqli_query($con, $query);
+        $query = $con->prepare("SELECT * FROM list_barang WHERE id = :id");
+        $query->bindParam(":id", $barangId);
+        $query->execute();
+        $results = $query->fetch();
 
-        $row = mysqli_num_rows($result);
-        $results = mysqli_fetch_all($result);
 
-        $sisaBarang = $results['qty'] - $qty;
 
-        if($sisaBarang < 1){
+        $sisaBarang = (int)$results['maxQty'] - $qty;
+        //echo $sisaBarang;
+
+        if ($sisaBarang < 1) {
             http_response_code(400);
             array_push($response, array(
                 'status' => 'NO_ITEMS_LEFT'
             ));
-        } else if ($qty > $results['qty']){
+        } else if ($qty > $results['maxQty']) {
             http_response_code(400);
             array_push($response, array(
                 'status' => 'EXCEED_MAX_QTY'
             ));
         } else {
-            $query2 = "INSERT INTO `peminjaman_barang`(`id`, `userId`, `barangId`, `startDate`, `startTime`, `endDate`, `endTime`, `qty`, `necessity`, `status`) VALUES (NULL,'$userId','$barangId','$startDate','$startTime','$endDate','$endTime','$qty','$necessity',NULL)";
+            $query2 = "INSERT INTO peminjaman_barang(`id`, `userId`, `barangId`, `startDate`, `startTime`, `endDate`, `endTime`, `qty`, `necessity`) 
+                         VALUES (NULL,'$userId','$barangId','$startDate','$startTime','$endDate','$endTime','$qty','$necessity')";
 
-            $result2 = mysqli_query($con, $query2);
+            $query3 = $con->prepare("UPDATE list_barang
+                        SET maxQty = :qtyNow
+                        WHERE id = :id");
+            $query3->bindParam(":qtyNow", $sisaBarang);
+            $query3->bindParam(":id", $barangId);
+            
 
-            if ($result2) {
+            $result2 = $con->query($query2);
+            $result3 = $query3->execute();
+
+            if ($result2 && $result3) {
                 http_response_code(200);
                 array_push($response, array(
                     'status' => 'OK'
                 ));
             } else {
+                
                 http_response_code(200);
                 array_push($response, array(
                     'status' => 'FAILED'
                 ));
             }
         }
-    }else {
+    } else {
         http_response_code(500);
         echo "Database cannot connect";
         array_push($response, array(
@@ -57,6 +69,4 @@ if($_SERVER['REQUEST_METHOD'] =='POST'){
     }
 
     echo json_encode(array('server_response' => $response));
-    mysqli_close($con);
-    
 }

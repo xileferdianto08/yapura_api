@@ -1,10 +1,10 @@
-<?php 
-if($_SERVER['REQUEST_METHOD'] =='POST'){
+<?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require_once '../dbConfig/db_connect.php';
 
-    if($con) {
+    if ($con) {
         $userId = $_POST['userId'];
-        $ruangId = $_POST['ruanganId'];
+        $ruangId = $_POST['ruangId'];
         $startDate = $_POST['startDate'];
         $startTime = $_POST['startTime'];
         $endDate = $_POST['endDate'];
@@ -13,35 +13,55 @@ if($_SERVER['REQUEST_METHOD'] =='POST'){
         $necessity = $_POST['necessity'];
         $response = array();
 
-        $query = "SELECT * FROM `peminjaman_ruang` WHERE `ruangId` = '$ruangId'";
-        $result = mysqli_query($con, $query);
+        $query = $con->prepare("SELECT * FROM peminjaman_ruangan WHERE ruangId = :id");
+        $query->bindParam(":id", $ruangId);
+        $query->execute();
+        $query->fetch();
 
-        $row = mysqli_num_rows($result);
-        $results = mysqli_fetch_all($result);
 
-        if($row > 0){
+        //echo $sisaBarang;
+
+        if ($query->rowCount() > 0) {
             http_response_code(400);
+
             array_push($response, array(
-                'status' => 'ROOM_BORROWED_ALR'
+                'status' => 'ROOM_BORROWED'
             ));
         } else {
-            $query2 = "INSERT INTO `peminjaman_ruang`(`id`, `userId`, `ruangId`, `startDate`, `startTime`, `endDate`, `endTime`, `capacity`, `necessity`, `status`) VALUES (NULL,'$userId','$ruangId','$startDate','$startTime','$endDate','$endTime','$capacity','$necessity',NULL)";
+            $query1 = $con->prepare("SELECT maxCapacity FROM list_ruangan WHERE id = :id");
+            $query1->bindParam(":id", $ruangId);
+            $query1->execute();
+            $results = $query1->fetch();
 
-            $result2 = mysqli_query($con, $query2);
-
-            if ($result2) {
-                http_response_code(200);
+            if ($capacity > (int)$results['maxCapacity']) {
+                http_response_code(400);
+            
                 array_push($response, array(
-                    'status' => 'OK'
+                    'status' => 'EXCEED_MAX_CAPACITY'
                 ));
             } else {
-                http_response_code(200);
-                array_push($response, array(
-                    'status' => 'FAILED'
-                ));
+                $query2 = "INSERT INTO peminjaman_ruangan(`id`, `userId`, `ruangId`, `startDate`, `startTime`, `endDate`, `endTime`, `capacity`, `necessity`) VALUES (NULL,'$userId','$ruangId','$startDate','$startTime','$endDate','$endTime','$capacity','$necessity')";
+
+
+                $result2 = $con->query($query2);
+
+
+                if ($result2) {
+                    http_response_code(200);
+                    array_push($response, array(
+                        'status' => 'OK'
+                    ));
+                } else {
+                    
+                    http_response_code(200);
+                    print_r($con->errorInfo());
+                    array_push($response, array(
+                        'status' => 'FAILED'
+                    ));
+                }
             }
         }
-    }else {
+    } else {
         http_response_code(500);
         echo "Database cannot connect";
         array_push($response, array(
@@ -50,6 +70,4 @@ if($_SERVER['REQUEST_METHOD'] =='POST'){
     }
 
     echo json_encode(array('server_response' => $response));
-    mysqli_close($con);
-    
 }
