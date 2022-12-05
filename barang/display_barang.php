@@ -13,18 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         foreach ($row as $data) {
             if ($query->rowCount() > 0) {
-                http_response_code(200);
                 array_push($response['data_barang'], $data);
             } else {
-                http_response_code(200);
                 echo "Data unavailable yet<br>";
                 $response['status'] = "DATA_UNAVAIL";
             }
         }
     } else {
-
-        http_response_code(500);
-        echo "Database cannot connect";
         array_push($response, array(
             'status' => 'DB FAILED'
         ));

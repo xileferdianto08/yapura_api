@@ -21,12 +21,10 @@
             $result = $query->execute();
 
             if ($result) {
-                http_response_code(200);
                 array_push($response, array(
                     'status' => 'OK'
                 ));
             } else {
-                http_response_code(200);
                 array_push($response, array(
                     'status' => 'FAILED'
                 ));
@@ -34,8 +32,6 @@
 
 
         }else {
-            http_response_code(500);
-            echo "Database cannot connect<br>";
             $response['status'] = "DB_FAILED";
         }
         echo json_encode(array('server_response' => $response));

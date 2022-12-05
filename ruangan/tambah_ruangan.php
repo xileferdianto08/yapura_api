@@ -19,8 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $postPicture = $_FILES['gambar']['name'];
 
         if ($queryruangan->rowCount() > 0) {
-            http_response_code(400);
-
             array_push($response, array(
                 'status' => 'DATA_EXIST'
             ));
@@ -47,8 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     ));
                 }
             } else {
-                http_response_code(400);
-                echo "Please upload a .png, .jpg, or .jpeg  <br>";
 
                 array_push($response, array(
                     'status' => 'EXT_FAILED'
@@ -56,8 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     } else {
-        http_response_code(500);
-        echo "Database cannot connect";
         array_push($response, array(
             'status' => 'DB FAILED'
         ));

@@ -22,8 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //echo $sisaBarang;
 
         if ($query->rowCount() > 0) {
-            http_response_code(400);
-
             array_push($response, array(
                 'status' => 'ROOM_BORROWED'
             ));
@@ -34,8 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $results = $query1->fetch();
 
             if ($capacity > (int)$results['maxCapacity']) {
-                http_response_code(400);
-            
                 array_push($response, array(
                     'status' => 'EXCEED_MAX_CAPACITY'
                 ));
@@ -47,13 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                 if ($result2) {
-                    http_response_code(200);
                     array_push($response, array(
                         'status' => 'OK'
                     ));
                 } else {
                     
-                    http_response_code(200);
                     print_r($con->errorInfo());
                     array_push($response, array(
                         'status' => 'FAILED'
@@ -62,8 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     } else {
-        http_response_code(500);
-        echo "Database cannot connect";
         array_push($response, array(
             'status' => 'DB_FAILED'
         ));

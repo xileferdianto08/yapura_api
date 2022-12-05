@@ -9,8 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // $response['login_user'] = array();
 
         if (!str_contains($email, '@student.umn.ac.id') && !str_contains($email, '@umn.ac.id')) {
-            http_response_code(400);
-            echo "Please use your student or staff email!";
             $response['status'] = "EMAIL_INCORRECT_FORMAT";
         } else {
 
@@ -24,8 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($query->rowCount() > 0) {
                 if ($hashedPwd == $result['password']) {
-                    http_response_code(200);
-                    echo "Succesfully Logged in";
+                    // echo "Succesfully Logged in";
 
                     $response['userId'] = $result['id'];
                     $response['nama'] = $result['nama'];
@@ -35,18 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $response['status'] = "LOGIN_SUCCESS";
                 } else {
-                    http_response_code(404);
-                    echo "Email or Password is incorrect<br>";
+                    // http_response_code(404);
+                    // echo "Email or Password is incorrect<br>";
                     $response['status'] = "DATA_INCORRECT";
                 }
             } else {
-                http_response_code(404);
                 $response['status'] = "DATA_NOT_EXIST";
             }
         }
     } else {
-        http_response_code(500);
-        echo "Database cannot connect<br>";
         $response['status'] = "DB_FAILED";
     }
 

@@ -24,12 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //echo $sisaBarang;
 
         if ($sisaBarang < 1) {
-            http_response_code(400);
             array_push($response, array(
                 'status' => 'NO_ITEMS_LEFT'
             ));
         } else if ($qty > $results['maxQty']) {
-            http_response_code(400);
             array_push($response, array(
                 'status' => 'EXCEED_MAX_QTY'
             ));
@@ -48,21 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result3 = $query3->execute();
 
             if ($result2 && $result3) {
-                http_response_code(200);
                 array_push($response, array(
                     'status' => 'OK'
                 ));
             } else {
                 
-                http_response_code(200);
                 array_push($response, array(
                     'status' => 'FAILED'
                 ));
             }
         }
     } else {
-        http_response_code(500);
-        echo "Database cannot connect";
         array_push($response, array(
             'status' => 'DB_FAILED'
         ));

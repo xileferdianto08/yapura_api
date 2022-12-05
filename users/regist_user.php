@@ -14,15 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query->fetch();
 
         if (!str_contains($email, '@umn.ac.id')) {
-            http_response_code(400);
-            echo "Please use your staff email!";
+
             array_push($response, array(
                 'status' => 'EMAIL_INCORRECT_FORMAT'
             ));
         } else {
             if ($query->rowCount() > 0) {
-                http_response_code(200);
-                echo "Email is already exist!";
+
                 array_push($response, array(
                     'status' => 'USER_ALREADY_EXIST'
                 ));
@@ -34,12 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $result = $con->query($query2);
 
                 if ($result) {
-                    http_response_code(200);
+
                     array_push($response, array(
                         'status' => 'OK'
                     ));
                 } else {
-                    http_response_code(200);
+
                     array_push($response, array(
                         'status' => 'FAILED'
                     ));
@@ -47,8 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     } else {
-        http_response_code(500);
-        echo "Database cannot connect";
         array_push($response, array(
             'status' => 'DB FAILED'
         ));

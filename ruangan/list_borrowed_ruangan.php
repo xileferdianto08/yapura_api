@@ -13,17 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         if ($query->rowCount() > 0) {
             foreach ($query as $row) {
-                http_response_code(200);
                 array_push($response['data_peminjaman_r'], $results);
             }
         } else {
-            http_response_code(200);
-            echo "Data unavailable <br>";
             $response['status'] = "DATA_UNAVAIL";
         }
     } else {
-        http_response_code(500);
-        echo "Database cannot connect<br>";
         $response['status'] = "DB_FAILED";
     }
 }
