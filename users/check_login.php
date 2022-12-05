@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = $_POST['email'];
         $password = $_POST['password'];
         $response = array();
-        $response['login_user'] = array();
+        // $response['login_user'] = array();
 
         if (!str_contains($email, '@student.umn.ac.id') && !str_contains($email, '@umn.ac.id')) {
             http_response_code(400);
@@ -27,11 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     http_response_code(200);
                     echo "Succesfully Logged in";
 
-                    $data['userId'] = $result['id'];
-                    $data['nama'] = $result['nama'];
-                    $data['email'] = $result['email'];
+                    $response['userId'] = $result['id'];
+                    $response['nama'] = $result['nama'];
+                    $response['email'] = $result['email'];
 
-                    array_push($response['login_user'], $data);
+                    // array_push($response['login_user'], $data);
 
                     $response['status'] = "LOGIN_SUCCESS";
                 } else {
