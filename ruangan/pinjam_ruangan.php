@@ -13,8 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $necessity = $_POST['necessity'];
         $response = array();
 
-        $query = $con->prepare("SELECT * FROM peminjaman_ruangan WHERE ruangId = :id");
-        $query->bindParam(":id", $ruangId);
+        $query = $con->prepare("SELECT * FROM peminjaman_ruangan WHERE ruangId = :rId");
+        $query->bindParam(":rId", $ruangId);
         $query->execute();
         $query->fetch();
 
@@ -26,20 +26,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'status' => 'ROOM_BORROWED'
             ));
         } else {
-            $query1 = $con->prepare("SELECT maxCapacity FROM list_ruangan WHERE id = :id");
-            $query1->bindParam(":id", $ruangId);
+            $query1 = $con->prepare("SELECT * FROM list_ruangan WHERE id = :ruangId");
+            $query1->bindParam(":ruangId", $ruangId);
             $query1->execute();
-            $results = $query1->fetch();
+            $results = $query1->fetch(PDO::FETCH_ASSOC);
+
+            $maxCapacity = $results['maxCapacity'] = isset($results['maxCapacity'])? (int)$results['maxCapacity'] : '';
 
             if ($capacity > (int)$results['maxCapacity']) {
+                print_r($con->errorInfo());
                 array_push($response, array(
                     'status' => 'EXCEED_MAX_CAPACITY'
                 ));
             } else {
-                $query2 = "INSERT INTO peminjaman_ruangan(`id`, `userId`, `ruangId`, `startDate`, `startTime`, `endDate`, `endTime`, `capacity`, `necessity`) VALUES (NULL,'$userId','$ruangId','$startDate','$startTime','$endDate','$endTime','$capacity','$necessity')";
+                $query2 = $con->prepare("INSERT INTO peminjaman_ruangan(`id`,`userId`, `ruangId`, `startDate`, `startTime`, `endDate`, `endTime`, `capacity`, `necessity`) VALUES (NULL, :userId, :ruangId, :startDate, :startTime, :endDate, :endTime, :capacity, :necessity)");
+                $query2->bindParam(":userId", $userId);
+                $query2->bindParam(":ruangId", $ruangId);
+                $query2->bindParam(":startDate", $startDate);
+                $query2->bindParam(":startTime", $startTime);
+                $query2->bindParam(":endDate", $endDate);
+                $query2->bindParam(":endTime", $endTime);
+                $query2->bindParam(":capacity", $capacity);
+                $query2->bindParam(":necessity", $necessity);
 
-
-                $result2 = $con->query($query2);
+                $result2=$query2->execute();
 
 
                 if ($result2) {

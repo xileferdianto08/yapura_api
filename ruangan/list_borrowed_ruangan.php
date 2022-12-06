@@ -3,19 +3,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     require_once '../dbConfig/db_connect.php';
 
     if ($con) {
-        $query = $con->prepare("SELECT pr.*, lb.nama nama FROM peminjaman_ruangan pr
-        JOIN list_ruangan as lb ON pr.ruanganId = lb.id");
+        $query = $con->prepare("SELECT pr.*, lr.nama as namaRuangan FROM peminjaman_ruangan pr
+        JOIN list_ruangan as lr ON pr.ruangId = lr.id WHERE pr.status = 'Approved'");
 
         $response = array();
         $response['data_peminjaman_r'] = array();
+        $query->execute();
 
-        $query->fetchAll();
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
         if ($query->rowCount() > 0) {
-            foreach ($query as $row) {
-                array_push($response['data_peminjaman_r'], $results);
+
+            foreach ($result as $row) {
+                array_push($response['data_peminjaman_r'], $row);
             }
         } else {
+
             $response['status'] = "DATA_UNAVAIL";
         }
     } else {
