@@ -7,15 +7,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $query->execute();
 
         $response = array();
-        $response['data_barang'] = array();
+        $response['server_response'] = array();
 
         $row = $query->fetchAll();
 
         foreach ($row as $data) {
             if ($query->rowCount() > 0) {
-                array_push($response['data_barang'], $data);
+                array_push($response['server_response'], $data);
+                
             } else {
-                echo "Data unavailable yet<br>";
                 $response['status'] = "DATA_UNAVAIL";
             }
         }
@@ -25,5 +25,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ));
     }
 
-    echo json_encode(array('server_response' => $response));
+    echo json_encode(array($response));
 }

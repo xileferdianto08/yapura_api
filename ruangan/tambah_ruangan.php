@@ -4,9 +4,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($con) {
         $namaruangan = $_POST['nama'];
-        $maxQty = $_POST['maxQty'];
+        $maxCapacity = $_POST['maxCapacity'];
         $desc = $_POST['desc'];
-        $gambar = $_FILES['gambar']['name'];
+        // $gambar = $_FILES['gambar']['name'];
         $response = array();
 
         $queryruangan = $con->prepare("SELECT * FROM list_ruangan WHERE nama = :nama");
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $queryruangan->execute();
         $queryruangan->fetch();
 
-        $path = "http://localhost/yapura_api/yapura_api/img_ruangan/";
+        $path = "https://yapuraapi.000webhostapp.com/yapura_api/img_ruangan/";
 
         $postPicture = $_FILES['gambar']['name'];
 
@@ -26,11 +26,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (str_contains($postPicture, ".jpg") || str_contains($postPicture, ".jpeg") || str_contains($postPicture, ".png")) {
                 $pictureDir = $_FILES['gambar']['tmp_name'];
 
-                move_uploaded_file($pictureDir, "../img_ruangan/" . $postPicture);
+                $pictName = $namaruangan."_".$postPicture;
 
-                $filename = "http://localhost/yapura_api/yapura_api/img_ruangan/" . $postPicture;
+                move_uploaded_file($pictureDir, "../img_ruangan/" . $pictName);
 
-                $query = "INSERT INTO `list_ruangan`(`id`, `nama`, `maxQty`, `description`, `gambar`) VALUES (NULL,'$namaruangan','$maxQty','$desc','$filename')";
+
+
+                $filename = "https://yapuraapi.000webhostapp.com/yapura_api/img_ruangan/" . $pictName;
+
+                $query = "INSERT INTO `list_ruangan`(`id`, `nama`, `maxCapacity`, `description`, `gambar`) VALUES (NULL,'$namaruangan','$maxCapacity','$desc','$filename')";
                 $result = $con->query($query);
 
                 if ($result) {

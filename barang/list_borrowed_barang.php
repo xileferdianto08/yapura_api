@@ -21,4 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else {
         $response['status'] = "DB_FAILED";
     }
+
+    echo json_encode(array($response));
 }

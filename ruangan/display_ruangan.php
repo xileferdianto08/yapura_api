@@ -7,13 +7,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $query->execute();
 
         $response = array();
-        $response['data_ruangan'] = array();
+        $response['server_response'] = array();
+        
 
-        $row = $query->fetchAll();
+        $row = $query->fetchAll(PDO::FETCH_ASSOC);
 
         if ($query->rowCount() > 0) {
             foreach ($row as $data) {
-                array_push($response['data_ruangan'], $data);
+                array_push($response['server_response'], $data);
             }
         } else {
             $response['status'] = "DATA_UNAVAIL";
@@ -24,6 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ));
     }
 
-    echo json_encode(array('server_response' => $response));
+    echo json_encode(array($response));
     //
 }
