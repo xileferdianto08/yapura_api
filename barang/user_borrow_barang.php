@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($con) {
         $userId = $_POST['userId'];
-        $query = $con->prepare("SELECT pb.*, lb.nama as namaBarang FROM peminjaman_barang pb
+        $query = $con->prepare("SELECT pb.*, lb.nama as namaBarang, lb.gambar as gambar FROM peminjaman_barang pb
         JOIN list_barang as lb ON pb.barangId = lb.id WHERE pb.userId = :userId");
 
         $query->bindParam(":userId", $userId);

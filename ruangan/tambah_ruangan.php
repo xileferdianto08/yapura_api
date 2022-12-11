@@ -38,12 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $result = $con->query($query);
 
                 if ($result) {
-                    http_response_code(200);
+                    
                     array_push($response, array(
                         'status' => 'OK'
                     ));
                 } else {
-                    http_response_code(200);
+                    
                     array_push($response, array(
                         'status' => 'FAILED'
                     ));

@@ -3,8 +3,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     require_once '../dbConfig/db_connect.php';
 
     if ($con) {
-        $query = $con->prepare("SELECT pb.*, lb.nama as namaBarang, lb.gambar as gambar FROM peminjaman_barang pb
-        JOIN list_barang as lb ON pb.barangId = lb.id WHERE pb.status = 'Approved'");
+        $query = $con->prepare("SELECT pb.*, lb.nama as namaBarang, lb.gambar as gambar, us.nama as namaUser FROM peminjaman_barang pb
+        JOIN list_barang as lb ON pb.barangId = lb.id 
+        JOIN users as us ON pb.userId = us.id");
         $query->execute();
 
         $response = array();

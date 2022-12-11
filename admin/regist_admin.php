@@ -14,14 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query->fetch();
 
         if (!str_contains($email, '@umn.ac.id')) {
-            array_push($response, array(
-                'status' => 'EMAIL_INCORRECT_FORMAT'
-            ));
+            $response['status'] = "EMAIL_INCORRECT_FORMAT";
         } else {
             if ($query->rowCount() > 0) {
-                array_push($response, array(
-                    'status' => 'USER_ALREADY_EXIST'
-                ));
+                $response['status'] = "USER_ALREADY_EXIST";
             } else {
                 $hashedPwd = hash('sha512', $password);
 
@@ -30,20 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $result = $con->query($query2);
 
                 if ($result) {
-                    array_push($response, array(
-                        'status' => 'OK'
-                    ));
+                    $response['status'] = "OK";
                 } else {
-                    array_push($response, array(
-                        'status' => 'FAILED'
-                    ));
+                    $response['status'] = "FAILED";
                 }
             }
         }
     } else {
-        array_push($response, array(
-            'status' => 'DB FAILED'
-        ));
+        $response['status'] = "DB FAILED";
     }
 
     echo json_encode(array('server_response' => $response));
