@@ -20,9 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             }
         }
     } else {
-        array_push($response, array(
-            'status' => 'DB FAILED'
-        ));
+        $response['status'] = 'DB_FAILED';
     }
 
     echo json_encode(array($response));

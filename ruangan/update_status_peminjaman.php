@@ -21,15 +21,10 @@
             $result = $query->execute();
 
             if ($result) {
-                array_push($response, array(
-                    'status' => 'OK'
-                ));
+                $response['status'] = 'OK';
             } else {
-                array_push($response, array(
-                    'status' => 'FAILED'
-                ));
+                $response['status'] = 'FAILED';
             }
-
 
         }else {
             $response['status'] = "DB_FAILED";

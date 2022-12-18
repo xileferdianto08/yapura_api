@@ -31,32 +31,22 @@
 
                 $filename = "https://yapuraapi.000webhostapp.com/yapura_api/img_ruangan/" . $pictName;
 
-                $query = "UPDATE `list_ruangan` SET nama = '$namaruangan', maxCapacity = '$maxCapacity', description = '$desc', gambar = '$filename'";
+                $query = "UPDATE `list_ruangan` SET nama = '$namaruangan', maxCapacity = '$maxCapacity', description = '$desc', gambar = '$filename' WHERE id = '$id'";
                 $result = $con->query($query);
 
                 if ($result) {
-                    array_push($response, array(
-                        'status' => 'OK'
-                    ));
+                    $response['status'] = 'OK';
                 } else {
-                    array_push($response, array(
-                        'status' => 'FAILED'
-                    ));
+                    $response['status'] = 'FAILED';
                 }
             } else {
-                array_push($response, array(
-                    'status' => 'EXT_FAILED'
-                ));
-            }    
+                $response['status'] = 'EXT_FAILED';
+            }   
         }else{
-            array_push($response, array(
-                'status' => 'DATA_NOT_FOUND'
-            ));
+            $response['status'] = 'DATA_NOT_FOUND';
         }
     } else {
-        array_push($response, array(
-            'status' => 'DB FAILED'
-        ));
+        $response['status'] = 'DB_FAILED';
     }
 
     echo json_encode(array('server_response' => $response));

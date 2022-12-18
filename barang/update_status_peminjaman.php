@@ -9,7 +9,7 @@
             if($approved == 0){
                 $status = "Rejected";
             } else if($approved == 1) {
-                $status = "Accepted";
+                $status = "Approved";
             }
 
             $query = $con->prepare("UPDATE peminjaman_barang
@@ -21,13 +21,10 @@
             $result = $query->execute();
 
             if ($result) {
-                array_push($response, array(
-                    'status' => 'OK'
-                ));
+                $response['status'] = "OK";
+                
             } else {
-                array_push($response, array(
-                    'status' => 'FAILED'
-                ));
+                $response['status'] = 'FAILED';
             }
 
 

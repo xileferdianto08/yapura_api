@@ -20,9 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($queryBarang->rowCount() > 0) {
 
-            array_push($response, array(
-                'status' => 'DATA_EXIST'
-            ));
+            $response['status'] = 'DATA_EXIST';
         } else {
             if (str_contains($postPicture, ".jpg") || str_contains($postPicture, ".jpeg") || str_contains($postPicture, ".png")) {
                 $pictureDir = $_FILES['gambar']['tmp_name'];
@@ -39,24 +37,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $result = $con->query($query);
 
                 if ($result) {
-                    array_push($response, array(
-                        'status' => 'OK'
-                    ));
+                    $response['status'] = 'OK';
                 } else {
-                    array_push($response, array(
-                        'status' => 'FAILED'
-                    ));
+                    $response['status'] = 'FAILED';
                 }
             } else {
-                array_push($response, array(
-                    'status' => 'EXT_FAILED'
-                ));
+                $response['status'] = 'EXT_FAILED';
             }
         }
     } else {
-        array_push($response, array(
-            'status' => 'DB FAILED'
-        ));
+        $response['status'] = 'DB_FAILED';
     }
 
     echo json_encode(array('server_response' => $response));
