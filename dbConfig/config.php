@@ -1,6 +1,6 @@
 <?php 
     define('SERVER', 'localhost');
-    define('USER', 'id19967598_root');
-    define('PASSWORD', 'FG1&B3owq^Qp=IF!');
-    define('DB_NAME', 'id19967598_yapura');
+    define('USER', $_ENV("DB_USER"));
+    define('PASSWORD', $_ENV("DB_PASS"));
+    define('DB_NAME', $_ENV("DB_NAME"));
 ?>
